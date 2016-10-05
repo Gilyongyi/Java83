@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+ 					
+<mapper namespace="UserMapper01">
+  	
+  	<select id="getUserList" 	resultType="mybatis.service.domain.User">
+		SELECT
+		user_id 	AS userId,
+		user_name 	AS userName,
+		password,
+		age,
+		grade,
+		reg_date 	AS regDate
+		FROM users   											
+  	</select>
+  	
+  	<select id="getUser"	resultType="mybatis.service.domain.User">
+  		SELECT
+  		user_id	AS userId,
+  		user_name AS userName,
+  		password,
+  		age,
+  		grade,
+  		reg_date AS regDate
+  		FROM users
+  		WHERE user_id=#{value}
+  	</select>
+  	
+  	<select id="findUserId" parameterType="user" resultType="string">
+  		SELECT
+  		user_name
+  		FROM users
+  		WHERE user_id = #{userId} AND password= #{password}
+  	</select>
+  	
+  	<select id="getUserListAge" parameterType="user"	resultType="String">
+  		SELECT
+  		user_name
+  		FROM users
+  		WHERE age = #{age}
+  	</select>
+  	
+</mapper>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans 	xmlns="http://www.springframework.org/schema/beans"
+				xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xsi:schemaLocation="http://www.springframework.org/schema/beans
+													  http://www.springframework.org/schema/beans/spring-beans.xsd">												 
+												 
+     <!-- ㅇ Hello instance 생성 서술적, 선언적 기술
+			ㅇ bean element 및 attribute 
+				- id : instance identifier 
+				- class : instance 생성 Bean (FQCN)     -->
+				
+		<bean id="diceA" class="spring.service.dice.impl.DiceAImpl"/>
+		<bean id="diceB" class="spring.service.dice.impl.DiceBImpl"/>
+		<bean id="diceC" class="spring.service.dice.impl.DiceCImpl"/>
+
+		<bean id="multiPlayer01" class="spring.service.dice.play.MultiPlayer">
+			<property name="diceList">
+				<list>
+					<ref bean="diceA"/>
+					<ref bean="diceB"/>
+					<ref bean="diceC"/>
+					<ref bean="diceA"/>
+				</list>
+			</property>
+		</bean>
+		
+		<bean id="multiPlayer02" class="spring.service.dice.play.MultiPlayer">
+			<property name="diceArray">
+				<list>
+					<ref bean="diceA"/>
+					<ref bean="diceB"/>
+					<ref bean="diceC"/>
+					<ref bean="diceA"/>
+				</list>
+			</property>
+		</bean>
+		
+		<bean id="multiPlayer03" class="spring.service.dice.play.MultiPlayer">
+			<property name="currentDate"><null/></property>
+			<property name="dice">
+				<bean class="spring.service.dice.impl.DiceAImpl"/>
+			</property>
+		</bean>
+			
+</beans>

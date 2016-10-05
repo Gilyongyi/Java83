@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="WebApp_ID" version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+	
+	<!-- Servlet mapping을 고려하여 아래의 Filter의 선언 및 mapping을 이해하자... -->
+	<filter>
+		<filter-name>SetContentTypeFilter</filter-name>
+		<filter-class>struts2.base.control.filter.SetContentTypeFilter</filter-class>
+		<init-param>
+			<param-name>ServletSPEC</param-name>
+			<param-value>since2.3</param-value>
+		</init-param>
+	</filter>
+	<!-- 
+		ㅇ Filter mapping은 아래와 같이 
+			1. servlet-name
+			2. url-pattern 의 두가지 방법이 있으나
+			본예제에서는 url-patten으로 처리한다. (struts2에서 url-pattern으로 처리함...)
+		<filter-mapping>
+			<filter-name>SetContentTypeFilter</filter-name>
+			<servlet-name>FilterUse</servlet-name>
+		</filter-mapping>
+	 -->
+	<filter-mapping>
+		<filter-name>SetContentTypeFilter</filter-name>
+		<url-pattern>/FilterUse</url-pattern>
+	</filter-mapping>
+	
+	<!-- Servlet definition -->
+	<servlet>
+		<servlet-name>FilterUse</servlet-name>
+		<servlet-class>struts2.base.test.FilterUse</servlet-class>
+	</servlet>
+	
+	<servlet>
+		<servlet-name>FilterNoUse</servlet-name>
+		<servlet-class>struts2.base.test.FilterNoUse</servlet-class>
+	</servlet>
+	
+	<!-- Servlet Mapping -->
+	<servlet-mapping>
+		<servlet-name>FilterUse</servlet-name>
+		<url-pattern>/FilterUse</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>FilterNoUse</servlet-name>
+		<url-pattern>/FilterNoUse</url-pattern>
+	</servlet-mapping>
+		
+</web-app>

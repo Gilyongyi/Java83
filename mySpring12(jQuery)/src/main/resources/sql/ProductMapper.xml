@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+ 					
+<mapper namespace="ProductMapper">
+  	
+  	<resultMap type="product" id="productSelectMap">
+  		<result property="prodNo" column="prod_no" jdbcType="INTEGER"/>
+  		<result property="prodName" column="prod_name" jdbcType="VARCHAR"/>
+  		<result property="prodDetail" column="prod_detail" jdbcType="VARCHAR"/>
+  		<result property="manuDate" column="manufacture_day" jdbcType="VARCHAR"/>
+  		<result property="price" column="price" jdbcType="INTEGER"/>
+  		<result property="fileName" column="image_file" jdbcType="VARCHAR"/>
+  		<result property="regDate" column="reg_date" jdbcType="DATE"/>
+  		<result property="proTranCode" column="tsc" jdbcType="VARCHAR"/>
+   	</resultMap>
+  	
+  	<insert id="addProduct" parameterType="product">
+		INSERT
+		INTO product
+		VALUES(seq_product_prod_no.nextval,#{prodName},#{prodDetail},#{manuDate},#{price},#{fileName:VARCHAR},SYSDATE)
+  	</insert>
+  	
+  	<select id="getProduct" parameterType="string" resultMap="productSelectMap">
+  		select
+		prod_no,prod_name,prod_detail,price,image_file,reg_date
+		from product
+		where prod_no=#{value}	
+  	</select>
+  	
+  	<update id="updateProduct" parameterType="product">
+		update product
+		<set> 
+			<if test="prodName!=null">prod_name=#{prodName}</if>,
+			<if test="prodDetail!=null">prod_detail=#{prodDetail}</if>,
+			<if test="manuDate!=null">manufacture_day=#{manuDate}</if>,
+			<if test="price!=null">price=#{price}</if>,
+			<if test="fileName!=null">image_file=#{fileName}</if>
+		</set>
+		where prod_no= #{prodNo}
+	</update>
+
+<select id="getProductList" parameterType="com.model2.mvc.common.Search" resultMap="productSelectMap">
+	select v1.rn,v2.count,p1.prod_no,p1.prod_name,p1.price,p1.reg_date,nvl(t1.tran_status_code,0) tsc,p1.image_file,prod_detail
+	from transaction t1,product p1,
+	(select prod_no, rownum rn from(select * from product
+		<choose>
+			<when test="order!=null and order=='asc'">order by price asc</when>
+			<when test="order!=null and order=='desc'">order by price desc</when>
+			<when test="order!=null and order=='rasc'">order by reg_date desc</when>
+			<when test="order!=null and order=='gasc'">order by prod_name asc</when>
+			<otherwise>order by prod_no</otherwise>
+		</choose>
+		)) v1, (select count(prod_no) count from product) v2
+		where v1.prod_no=p1.prod_no
+		and p1.prod_no=t1.prod_no(+)
+		and v1.rn between (#{currentPage}-1)*#{pageSize}+1 and #{currentPage}*#{pageSize}
+	
+		<if test="searchCondition!=null and searchKeyword!=null and searchKeyword!=''">
+			<if test="searchCondition=='1'">
+				and p1.prod_name='#{searchKeyword}'
+			</if>
+			<if test="searchCondition=='2'">
+				and p1.price='#{searchKeyword}'
+			</if>
+		</if>		
+		<choose>
+			<when test="order!=null and order=='asc'">order by p1.price asc</when>
+			<when test="order!=null and order=='desc'">order by p1.price desc</when>
+			<when test="order!=null and order=='rasc'">order by p1.reg_date desc</when>
+			<when test="order!=null and order=='rasc'">order by p1.prod_name asc</when>
+			<otherwise>order by p1.prod_no</otherwise>
+		</choose>
+	</select>
+	 
+	 
+	 
+	  	<select id="getTotalCount" parameterType="string" resultType="int">
+	  		 		
+	  		SELECT COUNT(*)
+			FROM product
+			<where>
+				<choose>
+					<when test="searchCondition=='1'">prod_name Like #{searchKeyword}</when>
+					<when test="searchCondition=='2'">price Like #{searchKeyword}</when>
+				</choose>
+			</where>  		
+	  	</select>
+	  	
+	  	<delete id="deleteProduct" parameterType="int">
+	  		delete from product where prod_no=#{prodNo}
+	  	</delete>
+	  	<!-- 
+	  	<select id="makeCurrentPageSql" parameterType="string" resultMap="userSelectMap">
+	  		SELECT
+			FROM (SELECT inner_table. * ,  ROWNUM AS row_seq
+		
+	  		
+	  	</select> -->
+	  
+		 	
+	 </mapper>

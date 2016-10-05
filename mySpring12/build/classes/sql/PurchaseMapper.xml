@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+ 					
+<mapper namespace="PurchaseMapper">
+  	
+  	<resultMap type="Purchase" id="purchaseSelectMap">
+  		<result property="tranNo" column="tran_no" jdbcType="NUMERIC"/>
+  		<result property="purchaseProd.prodNo" column="prod_no" jdbcType="NUMERIC"/>
+  		<result property="buyer.userId" column="buyer_id" jdbcType="VARCHAR"/>
+  		<result property="paymentOption" column="payment_option" jdbcType="VARCHAR"/>
+  		<result property="receiverName" column="receiver_name" jdbcType="VARCHAR"/>
+  		<result property="receiverPhone" column="receiver_phone" jdbcType="VARCHAR"/>
+  		<result property="divyAddr" column="demailaddr" jdbcType="VARCHAR"/>
+   		<result property="divyRequest" column="dlvy_request" jdbcType="VARCHAR"/>
+  		<result property="tranCode" column="tran_status_code" jdbcType="VARCHAR"/>
+  		<result property="orderDate" column="order_date" jdbcType="DATE"/>
+  		<result property="divyDate" column="dlvy_date" jdbcType="DATE"/>
+  		
+   	</resultMap>
+    <insert id="addPurchase" parameterType="purchase">
+  		insert into transaction
+		values(seq_transaction_tran_no.nextval,
+				#{purchaseProd.prodNo:NUMERIC},
+				#{buyer.userId:VARCHAR},
+				#{paymentOption:VARCHAR},
+				#{receiverName:VARCHAR},
+				#{receiverPhone:VARCHAR},
+				#{divyAddr:VARCHAR},
+				#{divyRequest:VARCHAR},
+				1,
+				sysdate,
+				TO_DATE('${divyDate}'))
+  	</insert>
+  	 
+  	<select id="getPurchase" parameterType="int" resultMap="purchaseSelectMap">
+  		select *
+  		from transaction
+  		where tran_no=#{value}
+  	</select>
+  	
+  	<update id="updatePurchase" parameterType="purchase">
+  		update transaction
+  		<set>
+	  		<if test="paymentOption!=null">payment_option=#{paymentOption}</if>,
+			<if test="receiverName!=null">receiver_name=#{receiverName}</if>,
+			<if test="receiverPhone!=null">receiver_phone=#{receiverPhone}</if>,
+			<if test="divyAddr!=null">demailaddr=#{divyAddr}</if>,
+			<if test="divyRequest!=null">dlvy_request=#{divyRequest}</if>,
+			<if test="divyDate!=null">dlvy_date=TO_DATE('${divyDate}')</if>
+		</set>
+		where tran_no=#{tranNo}
+	</update>
+	
+	<select id="getPurchaseList" parameterType="map" resultMap="purchaseSelectMap">
+		select * from transaction where buyer_id=#{buyer} order by prod_no
+	</select>
+	<update id="updateTranCode" parameterType="purchase">
+		update transaction
+		<set>
+		<if test="tranCode!=null">tran_status_code=#{tranCode}</if>
+		</set>
+		where tran_no=#{tranNo}
+  	</update>
+  	
+  	<select id="getPurchase2" parameterType="string" resultMap="purchaseSelectMap">
+  		select * from transaction where prod_no=#{prodNo}
+  	</select>
+<!--  
+	<select id="getSaleList" parameterType="mini.common.Search" resultMap="productSelectMap">
+	</select>
+ -->
+  
+  	</mapper>
